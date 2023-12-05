@@ -19,7 +19,9 @@
     </thead>
     <tbody>
       <tr *ngFor="let product of paginatedProducts">
-        <td>{{ product.logo }}</td>
+        <td>
+          <img [src]="product.logo" alt="logo" width="50" height="30" />
+        </td>
         <td>{{ product.name }}</td>
         <td>{{ product.description }}</td>
         <td>{{ product.releaseDate }}</td>

@@ -1,0 +1,31 @@
+<div class="add-product">
+  <h2>Formulario de Registro</h2>
+  <form [formGroup]="productForm" (ngSubmit)="addProduct()">
+    <div class="form-group">
+      <label for="name">Nombre:</label>
+      <input type="text" id="name" formControlName="name" />
+      <div
+        *ngIf="
+          productForm.get('name')?.hasError('required') &&
+          productForm.get('name')?.touched
+        "
+      >
+        Este campo es requerido!
+      </div>
+    </div>
+    <div class="form-group">
+      <label for="description">Descripción:</label>
+      <textarea id="description" formControlName="description"></textarea>
+      <div
+        *ngIf="
+          productForm.get('description')?.hasError('required') &&
+          productForm.get('description')?.touched
+        "
+      >
+        Este campo es requerido!
+      </div>
+    </div>
+    <button>Reiniciar</button>
+    <button type="submit" [disabled]="!productForm.valid">Enviar</button>
+  </form>
+</div>
