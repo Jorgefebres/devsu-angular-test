@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Product } from 'src/app/interfaces/product.interface';
+import { DateValidators } from 'src/app/validators/date-validator';
 
 @Component({
   selector: 'app-add-product',
@@ -12,8 +13,45 @@ export class AddProductComponent {
 
   constructor(private formBuilder: FormBuilder) {
     this.productForm = this.formBuilder.group({
-      name: ['', Validators.required],
-      description: ['', Validators.required],
+      id: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(3),
+          Validators.maxLength(10),
+        ]),
+      ],
+      name: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(5),
+          Validators.maxLength(100),
+        ]),
+      ],
+      description: [
+        '',
+        Validators.compose([
+          Validators.required,
+          Validators.minLength(10),
+          Validators.maxLength(200),
+        ]),
+      ],
+      logo: ['', Validators.required],
+      date_release: [
+        '',
+        Validators.compose([
+          Validators.required,
+          DateValidators.greaterThan(new Date()),
+        ]),
+      ],
+      date_revision: [
+        '',
+        Validators.compose([
+          Validators.required,
+          DateValidators.greaterThan(new Date()),
+        ]),
+      ],
     });
   }
 

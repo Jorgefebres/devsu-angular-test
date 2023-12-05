@@ -139,6 +139,4 @@ describe('ProductListComponent', () => {
       },
     ]);
   });
-
-  // Add more tests for different scenarios as needed
 });

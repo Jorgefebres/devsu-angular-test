@@ -12,22 +12,24 @@ label {
   margin-bottom: 5px;
 }
 
+.reset-button {
+  background-color: var(--color-brand-sky-blue);
+  color: var(--color-brand-blue);
+}
+
+.send-button {
+  background-color: var(--color-brand-yellow);
+  color: var(--color-brand-blue);
+}
+
+.send-button:disabled {
+  background-color: var(--color-brand-disabled-yellow);
+  color: var(--color-brand-disabled-blue);
+}
+
 input,
 textarea {
   width: 100%;
   padding: 8px;
   box-sizing: border-box;
-}
-
-button {
-  padding: 10px;
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  cursor: pointer;
-}
-
-button:disabled {
-  background-color: #ddd;
-  cursor: not-allowed;
 }

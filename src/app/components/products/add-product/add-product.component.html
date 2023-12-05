@@ -2,6 +2,18 @@
   <h2>Formulario de Registro</h2>
   <form [formGroup]="productForm" (ngSubmit)="addProduct()">
     <div class="form-group">
+      <label for="id">Id:</label>
+      <input type="text" id="id" formControlName="id" />
+      <div
+        *ngIf="
+          productForm.get('id')?.hasError('required') &&
+          productForm.get('id')?.touched
+        "
+      >
+        Este campo es requerido!
+      </div>
+    </div>
+    <div class="form-group">
       <label for="name">Nombre:</label>
       <input type="text" id="name" formControlName="name" />
       <div
@@ -25,7 +37,48 @@
         Este campo es requerido!
       </div>
     </div>
-    <button>Reiniciar</button>
-    <button type="submit" [disabled]="!productForm.valid">Enviar</button>
+    <div class="form-group">
+      <label for="logo">Logo:</label>
+      <input type="text" id="logo" formControlName="logo" />
+      <div
+        *ngIf="
+          productForm.get('logo')?.hasError('required') &&
+          productForm.get('logo')?.touched
+        "
+      >
+        Este campo es requerido!
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="date_release">Fecha Liberación:</label>
+      <input type="text" id="date_release" formControlName="date_release" />
+      <pre>{{ productForm.get("date_release")?.errors | json }}</pre>
+      <div
+        *ngIf="
+          productForm.get('date_release')?.hasError('required') &&
+          productForm.get('date_release')?.touched
+        "
+      >
+        Este campo es requerido!
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="date_revision">Fecha Revisión:</label>
+      <input type="text" id="date_revision" formControlName="date_revision" />
+      <div
+        *ngIf="
+          productForm.get('date_revision')?.hasError('required') &&
+          productForm.get('date_revision')?.touched
+        "
+      >
+        Este campo es requerido!
+      </div>
+    </div>
+    <button class="reset-button">Reiniciar</button>
+    <button class="send-button" type="submit" [disabled]="!productForm.valid">
+      Enviar
+    </button>
   </form>
 </div>
