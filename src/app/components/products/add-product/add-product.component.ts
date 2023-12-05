@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Product } from 'src/app/interfaces/product.interface';
-import { DateValidators } from 'src/app/validators/date-validator';
+import { Product } from '../../../interfaces/product.interface';
+import { DateValidators } from '../../../validators/date-validator';
 
 @Component({
   selector: 'app-add-product',
