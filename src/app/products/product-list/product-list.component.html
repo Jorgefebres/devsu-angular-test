@@ -1,0 +1,39 @@
+<div class="product-list">
+  <div class="search-container">
+    <input
+      type="text"
+      id="search"
+      [(ngModel)]="searchTerm"
+      placeholder="Search..."
+    />
+  </div>
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Logo</th>
+        <th>Nombre del producto</th>
+        <th>Descripción</th>
+        <th>Fecha de liberación</th>
+        <th>Fecha de reestructuración</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let product of paginatedProducts">
+        <td>{{ product.logo }}</td>
+        <td>{{ product.name }}</td>
+        <td>{{ product.description }}</td>
+        <td>{{ product.releaseDate }}</td>
+        <td>{{ product.revisionDate }}</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="pagination">
+    <label>{{ paginatedProducts.length }} Resultado(s)</label>
+    <select [(ngModel)]="currentPage" (change)="onPageChange(currentPage)">
+      <option *ngFor="let page of getPagesArray()" [value]="page">
+        {{ page }}
+      </option>
+    </select>
+  </div>
+</div>
