@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Product } from '../../../interfaces/product.interface';
 import { ProductsService } from '../../../services/products.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-list',
@@ -13,7 +14,10 @@ export class ProductListComponent {
   currentPage = 1;
   searchTerm = '';
 
-  constructor(private productsService: ProductsService) {}
+  constructor(
+    private productsService: ProductsService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.fetchProducts();
@@ -39,6 +43,10 @@ export class ProductListComponent {
 
   onPageChange(page: number): void {
     this.currentPage = page;
+  }
+
+  onAddNewProduct() {
+    this.router.navigate(['products/add-product']);
   }
 
   getPagesArray(): number[] {

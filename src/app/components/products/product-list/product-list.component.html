@@ -1,11 +1,16 @@
 <div class="product-list">
-  <div class="search-container">
-    <input
-      type="text"
-      id="search"
-      [(ngModel)]="searchTerm"
-      placeholder="Search..."
-    />
+  <div class="actions-container">
+    <div class="search-container">
+      <input
+        type="text"
+        id="search"
+        [(ngModel)]="searchTerm"
+        placeholder="Search..."
+      />
+    </div>
+    <div class="add-product-button-container">
+      <button (click)="onAddNewProduct()">Agregar</button>
+    </div>
   </div>
   <table class="table">
     <thead>
@@ -24,8 +29,8 @@
         </td>
         <td>{{ product.name }}</td>
         <td>{{ product.description }}</td>
-        <td>{{ product.releaseDate }}</td>
-        <td>{{ product.revisionDate }}</td>
+        <td>{{ product.date_release | date : "dd/MM/yyyy" }}</td>
+        <td>{{ product.date_revision | date : "dd/MM/yyyy" }}</td>
       </tr>
     </tbody>
   </table>

@@ -1,1 +1,21 @@
-/* You can add global styles to this file, and also import other style files */
+@import "./scss/tokens.scss";
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  border-radius: inherit;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body {
+  font-size: var(--font-size-base);
+}

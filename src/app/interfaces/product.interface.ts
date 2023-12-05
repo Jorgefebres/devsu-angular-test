@@ -3,6 +3,6 @@ export interface Product {
   logo: string;
   name: string;
   description: string;
-  releaseDate: Date | string;
-  revisionDate: Date | string;
+  date_release: Date | string;
+  date_revision: Date | string;
 }

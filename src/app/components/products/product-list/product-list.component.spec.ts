@@ -1,44 +1,144 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
 import { ProductListComponent } from './product-list.component';
-import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ProductsService } from '../../../services/products.service';
+import { Router } from '@angular/router';
 
 describe('ProductListComponent', () => {
   let component: ProductListComponent;
   let fixture: ComponentFixture<ProductListComponent>;
+  let productsServiceMock: jest.Mocked<ProductsService>;
+  let router: Router;
 
   beforeEach(() => {
+    productsServiceMock = {
+      getProducts: jest.fn(),
+    } as unknown as jest.Mocked<ProductsService>;
+
     TestBed.configureTestingModule({
       declarations: [ProductListComponent],
-      imports: [HttpClientTestingModule],
-    });
+      imports: [RouterTestingModule],
+      providers: [{ provide: ProductsService, useValue: productsServiceMock }],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ProductListComponent);
     component = fixture.componentInstance;
+    router = TestBed.inject(Router);
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  // it('should filter products based on the searchTerm', () => {
-  //   component.searchTerm = 'producto 1';
-  //   const filteredProducts = component.paginatedProducts;
-  //   expect(filteredProducts.length).toBe(1);
-  //   expect(filteredProducts[0].name).toContain('producto 1');
-  // });
+  it('should fetch products on ngOnInit', () => {
+    const mockProducts = [
+      {
+        id: 1,
+        name: 'Product 1',
+        description: '',
+        logo: '',
+        date_release: '',
+        date_revision: '',
+      },
+    ];
+    productsServiceMock.getProducts.mockReturnValue(of(mockProducts));
 
-  // it('should calculate total pages correctly', () => {
-  //   component.pageSize = 3;
-  //   expect(component.totalPages).toBe(2);
-  // });
+    component.ngOnInit();
 
-  it('should change currentPage on onPageChange', () => {
-    component.onPageChange(2);
-    expect(component.currentPage).toBe(2);
+    expect(productsServiceMock.getProducts).toHaveBeenCalled();
+    expect(component.products).toEqual(mockProducts);
   });
 
-  // it('should generate an array of page numbers', () => {
-  //   component.pageSize = 3;
-  //   const pagesArray = component.getPagesArray();
-  //   expect(pagesArray).toEqual([1, 2]);
-  // });
+  it('should calculate totalPages correctly', () => {
+    component.products = [
+      {
+        id: 1,
+        name: 'Product 1',
+        description: '',
+        logo: '',
+        date_release: '',
+        date_revision: '',
+      },
+      {
+        id: 2,
+        name: 'Product 2',
+        description: '',
+        logo: '',
+        date_release: '',
+        date_revision: '',
+      },
+      {
+        id: 3,
+        name: 'Product 3',
+        description: '',
+        logo: '',
+        date_release: '',
+        date_revision: '',
+      },
+    ];
+    component.pageSize = 2;
+
+    expect(component.totalPages).toBe(2);
+  });
+
+  it('should navigate to "products/add-product" on onAddNewProduct', () => {
+    const navigateSpy = jest.spyOn(router, 'navigate');
+    component.onAddNewProduct();
+
+    expect(navigateSpy).toHaveBeenCalledWith(['products/add-product']);
+  });
+
+  it('should update currentPage on onPageChange', () => {
+    component.onPageChange(3);
+
+    expect(component.currentPage).toBe(3);
+  });
+
+  it('should calculate paginatedProducts correctly', () => {
+    component.products = [
+      {
+        id: 1,
+        name: 'Product 1',
+        description: '',
+        logo: '',
+        date_release: '',
+        date_revision: '',
+      },
+      {
+        id: 2,
+        name: 'Product 2',
+        description: '',
+        logo: '',
+        date_release: '',
+        date_revision: '',
+      },
+      {
+        id: 3,
+        name: 'Product 3',
+        description: '',
+        logo: '',
+        date_release: '',
+        date_revision: '',
+      },
+    ];
+    component.pageSize = 2;
+    component.currentPage = 2;
+    component.searchTerm = 'Product';
+
+    const paginatedProducts = component.paginatedProducts;
+
+    expect(paginatedProducts).toEqual([
+      {
+        id: 3,
+        name: 'Product 3',
+        description: '',
+        logo: '',
+        date_release: '',
+        date_revision: '',
+      },
+    ]);
+  });
+
+  // Add more tests for different scenarios as needed
 });

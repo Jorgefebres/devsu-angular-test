@@ -4,11 +4,13 @@
   padding: 20px;
 }
 
-.search-container {
+.actions-container {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 10px;
 }
 
-.table-responsive {
+.table {
   overflow-x: auto;
 }
 
@@ -42,4 +44,15 @@
 .pagination select {
   padding: 5px;
   margin-right: 10px;
+}
+
+.add-product-button-container {
+  button {
+    background-color: var(--color-brand-yellow);
+    color: var(--color-brand-blue);
+    border: none;
+    font-weight: bold;
+    height: 3em;
+    width: 7em;
+  }
 }
