@@ -26,6 +26,7 @@ export class AddProductComponent implements OnInit {
   hasError = false;
   errorCode = 0;
   errorMessage = '';
+  isDuplicateId = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -104,7 +105,6 @@ export class AddProductComponent implements OnInit {
   addProduct(): void {
     if (this.productForm.valid) {
       this.loading = true;
-      console.log(this.productForm);
       const newProduct: Product = {
         ...this.productForm.value,
         date_release: getFormattedDateToTime(
@@ -114,27 +114,51 @@ export class AddProductComponent implements OnInit {
           this.productForm.get('date_revision')?.value
         ),
       };
-      console.log('Adding product:', newProduct);
       this.productsService
-        .addProduct(newProduct)
+        .verifyIfProductExist(newProduct.id)
         .pipe(
           catchError((error) => {
-            console.error('Error fetching products:', error);
+            console.error('Error verifyign product existence:', error);
             this.hasError = true;
             this.loading = false;
-            if (error.error == "Can't create because product is duplicate") {
-              this.errorMessage =
-                'Ya existe un producto con ese mismo Id, por favor intenta con otro';
-            }
             return throwError(error);
           })
         )
-        .subscribe((product: Product) => {
-          console.log('product added: ', product);
-          this.loading = false;
-          this.resetForm();
-          this.goToProductList();
+        .subscribe((exists: boolean) => {
+          if (!exists) {
+            this.productsService
+              .addProduct(newProduct)
+              .pipe(
+                catchError((error) => {
+                  console.error('Error fetching products:', error);
+                  this.hasError = true;
+                  this.loading = false;
+                  return throwError(error);
+                })
+              )
+              .subscribe((product: Product) => {
+                console.log('product added: ', product);
+                this.loading = false;
+                this.resetForm();
+                this.goToProductList();
+              });
+          } else {
+            this.loading = false;
+            this.isDuplicateId = exists;
+            this.updateIdError();
+          }
         });
+    }
+  }
+
+  private updateIdError(): void {
+    const idControl = this.productForm.get('id');
+    if (idControl) {
+      if (this.isDuplicateId) {
+        idControl.setErrors({ duplicateId: true });
+      } else {
+        idControl.setErrors(null);
+      }
     }
   }
 

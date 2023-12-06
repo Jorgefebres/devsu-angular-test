@@ -32,19 +32,35 @@
 
 .pagination {
   display: flex;
-  align-items: center;
   justify-content: space-between;
   margin-top: 20px;
 }
 
-.pagination label {
-  margin-right: 10px;
+.pagination button {
+  padding: 5px 10px;
+  cursor: pointer;
 }
 
-.pagination select {
-  padding: 5px;
-  margin-right: 10px;
+.pagination button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
+
+// .pagination {
+//   display: flex;
+//   align-items: center;
+//   justify-content: space-between;
+//   margin-top: 20px;
+// }
+
+// .pagination label {
+//   margin-right: 10px;
+// }
+
+// .pagination select {
+//   padding: 5px;
+//   margin-right: 10px;
+// }
 
 .add-product-button-container {
   button {

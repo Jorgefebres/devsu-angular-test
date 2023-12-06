@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Product } from '../interfaces/product.interface';
 import { environment } from '../../environments/environment';
@@ -22,6 +22,15 @@ export class ProductsService {
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.apiUrl}/bp/products`, {
       headers: this._getHeaders(),
+    });
+  }
+
+  verifyIfProductExist(id: string): Observable<boolean> {
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append('id', id);
+    return this.http.get<boolean>(`${this.apiUrl}/bp/products/verification`, {
+      headers: this._getHeaders(),
+      params: queryParams,
     });
   }
 

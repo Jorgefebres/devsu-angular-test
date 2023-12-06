@@ -41,9 +41,22 @@
 
     <div class="pagination">
       <label>{{ paginatedProducts.length }} Resultado(s)</label>
-      <select [(ngModel)]="currentPage" (change)="onPageChange(currentPage)">
-        <option *ngFor="let page of getPagesArray()" [value]="page">
-          {{ page }}
+      <button
+        (click)="onPageChange(currentPage - 1)"
+        [disabled]="currentPage === 1"
+      >
+        Anterior
+      </button>
+      <span>{{ currentPage }} / {{ totalPages }}</span>
+      <button
+        (click)="onPageChange(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+      >
+        Siguiente
+      </button>
+      <select [(ngModel)]="pageSize" (change)="onMaxPageChange(pageSize)">
+        <option *ngFor="let pageSize of pageSizes" [value]="pageSize">
+          {{ pageSize }}
         </option>
       </select>
     </div>

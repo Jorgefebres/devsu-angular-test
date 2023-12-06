@@ -11,6 +11,7 @@ import { Router } from '@angular/router';
 export class ProductListComponent {
   products!: Product[];
   pageSize = 5;
+  pageSizes = [5, 10, 20];
   currentPage = 1;
   searchTerm = '';
   loading = true;
@@ -47,11 +48,11 @@ export class ProductListComponent {
     this.currentPage = page;
   }
 
-  goToAddProduct() {
-    this.router.navigate(['products/add-product']);
+  onMaxPageChange(page: number): void {
+    this.pageSize = page;
   }
 
-  getPagesArray(): number[] {
-    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+  goToAddProduct() {
+    this.router.navigate(['products/add-product']);
   }
 }
