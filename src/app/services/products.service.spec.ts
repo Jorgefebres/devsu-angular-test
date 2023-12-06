@@ -4,8 +4,8 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { ProductsService } from './products.service';
-import { environment } from '../../environments/environment';
 import { Product } from '../interfaces/product.interface';
+import { HttpHeaders, HttpParams } from '@angular/common/http';
 
 describe('ProductsService', () => {
   let service: ProductsService;
@@ -29,55 +29,20 @@ describe('ProductsService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should get products from the API', () => {
+  it('should return headers with author id', () => {
+    const headers = service.getHeaders();
+    expect(headers.get('authorId')).toEqual('500');
+  });
+
+  it('should get products', () => {
     const mockProducts: Product[] = [
       {
-        id: 'trj-crd1',
-        logo: 'logo.jpg',
-        name: 'nombre del producto 1',
-        description: 'Descripción',
-        date_release: '01/01/2000',
-        date_revision: '01/01/2001',
-      },
-      {
-        id: 'trj-crd2',
-        logo: 'logo.jpg',
-        name: 'nombre del producto 2',
-        description: 'Descripción',
-        date_release: '01/01/2000',
-        date_revision: '01/01/2001',
-      },
-      {
-        id: 'trj-crd3',
-        logo: 'logo.jpg',
-        name: 'nombre del producto 3',
-        description: 'Descripción',
-        date_release: '01/01/2000',
-        date_revision: '01/01/2001',
-      },
-      {
-        id: 'trj-crd4',
-        logo: 'logo.jpg',
-        name: 'nombre del producto 4',
-        description: 'Descripción',
-        date_release: '01/01/2000',
-        date_revision: '01/01/2001',
-      },
-      {
-        id: 'trj-crd5',
-        logo: 'logo.jpg',
-        name: 'nombre del producto 5',
-        description: 'Descripción',
-        date_release: '01/01/2000',
-        date_revision: '01/01/2001',
-      },
-      {
-        id: 'trj-crd6',
-        logo: 'logo.jpg',
-        name: 'nombre del producto 6',
-        description: 'Descripción',
-        date_release: '01/01/2000',
-        date_revision: '01/01/2001',
+        id: 'trj-test1',
+        name: 'Product 1',
+        description: 'tarjeta de credito test',
+        logo: 'logo-test',
+        date_release: '',
+        date_revision: '',
       },
     ];
 
@@ -86,36 +51,113 @@ describe('ProductsService', () => {
     });
 
     const req = httpTestingController.expectOne(
-      `${environment.baseUrl}/bp/products`
+      `${service.apiUrl}/bp/products`
     );
-
     expect(req.request.method).toEqual('GET');
-    expect(req.request.headers.get('authorId')).toEqual('500');
-
     req.flush(mockProducts);
   });
 
-  it('should add a new product', () => {
-    const apiUrl = `${environment.baseUrl}/bp/products`;
-    const mockProduct: Product = {
-      id: 'trj-test',
-      name: 'Test Product',
-      description: 'Product Description',
-      logo: 'test_logo.jpg',
-      date_release: '01/01/2023',
-      date_revision: '01/01/2024',
-    };
+  it('should verify if product exists', () => {
+    const productId = '1';
+    const mockExistence = true;
 
-    service.addProduct(mockProduct).subscribe((response) => {
-      expect(response).toEqual(mockProduct);
+    service.verifyIfProductExist(productId).subscribe((exists) => {
+      expect(exists).toEqual(mockExistence);
     });
 
-    const req = httpTestingController.expectOne(apiUrl);
+    const req = httpTestingController.expectOne(
+      `${service.apiUrl}/bp/products/verification?id=${productId}`
+    );
+    expect(req.request.method).toEqual('GET');
+    req.flush(mockExistence);
+  });
 
-    expect(req.request.method).toBe('POST');
-    expect(req.request.headers.get('Content-Type')).toBe('application/json');
-    expect(req.request.headers.get('Author-Id')).toBe('500');
+  it('should add product', () => {
+    const mockProduct: Product = {
+      id: 'trj-test1',
+      name: 'Product 1',
+      description: 'tarjeta de credito test',
+      logo: 'logo-test',
+      date_release: '',
+      date_revision: '',
+    };
 
+    service.addProduct(mockProduct).subscribe((product) => {
+      expect(product).toEqual(mockProduct);
+    });
+
+    const req = httpTestingController.expectOne(
+      `${service.apiUrl}/bp/products`
+    );
+    expect(req.request.method).toEqual('POST');
     req.flush(mockProduct);
+  });
+
+  it('should delete product', () => {
+    const productId = '1';
+
+    service.deleteProduct(productId).subscribe();
+
+    const req = httpTestingController.expectOne(
+      `${service.apiUrl}/bp/products?id=${productId}`
+    );
+    expect(req.request.method).toEqual('DELETE');
+    req.flush({});
+  });
+
+  it('should update product', () => {
+    const mockProduct: Product = {
+      id: 'trj-test1',
+      name: 'Product 1',
+      description: 'tarjeta de credito test',
+      logo: 'logo-test',
+      date_release: '',
+      date_revision: '',
+    };
+
+    service.updateProduct(mockProduct).subscribe((product) => {
+      expect(product).toEqual(mockProduct);
+    });
+
+    const req = httpTestingController.expectOne(
+      `${service.apiUrl}/bp/products`
+    );
+    expect(req.request.method).toEqual('PUT');
+    req.flush(mockProduct);
+  });
+
+  it('should set and get selected product', () => {
+    const mockProduct: Product = {
+      id: 'trj-test1',
+      name: 'Product 1',
+      description: 'tarjeta de credito test',
+      logo: 'logo-test',
+      date_release: '',
+      date_revision: '',
+    };
+
+    service.setSelectedProduct(mockProduct);
+
+    service.getSelectedProduct().subscribe((selectedProduct) => {
+      expect(selectedProduct).toEqual(mockProduct);
+    });
+  });
+
+  it('should clear selected product', () => {
+    const mockProduct: Product = {
+      id: 'trj-test1',
+      name: 'Product 1',
+      description: 'tarjeta de credito test',
+      logo: 'logo-test',
+      date_release: '',
+      date_revision: '',
+    };
+
+    service.setSelectedProduct(mockProduct);
+    service.clearSelectedProduct();
+
+    service.getSelectedProduct().subscribe((selectedProduct) => {
+      expect(selectedProduct).toBeNull();
+    });
   });
 });

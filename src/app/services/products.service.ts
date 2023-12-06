@@ -9,13 +9,13 @@ import { HEADERS } from '../constants/constants';
   providedIn: 'root',
 })
 export class ProductsService {
-  private apiUrl = environment.baseUrl;
+  apiUrl = environment.baseUrl;
   private selectedProductSubject = new BehaviorSubject<Product | null>(null);
   selectedProduct$ = this.selectedProductSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  private _getHeaders(): HttpHeaders {
+  getHeaders(): HttpHeaders {
     return new HttpHeaders({
       [HEADERS.AUTHOR_ID]: '500',
     });
@@ -23,7 +23,7 @@ export class ProductsService {
 
   getProducts(): Observable<Product[]> {
     return this.http.get<Product[]>(`${this.apiUrl}/bp/products`, {
-      headers: this._getHeaders(),
+      headers: this.getHeaders(),
     });
   }
 
@@ -31,7 +31,7 @@ export class ProductsService {
     let queryParams = new HttpParams();
     queryParams = queryParams.append('id', id);
     return this.http.get<boolean>(`${this.apiUrl}/bp/products/verification`, {
-      headers: this._getHeaders(),
+      headers: this.getHeaders(),
       params: queryParams,
     });
   }
@@ -48,7 +48,7 @@ export class ProductsService {
         date_revision: product.date_revision,
       },
       {
-        headers: this._getHeaders(),
+        headers: this.getHeaders(),
       }
     );
   }
@@ -57,7 +57,7 @@ export class ProductsService {
     let queryParams = new HttpParams();
     queryParams = queryParams.append('id', id);
     return this.http.delete<any>(`${this.apiUrl}/bp/products`, {
-      headers: this._getHeaders(),
+      headers: this.getHeaders(),
       params: queryParams,
     });
   }
@@ -74,7 +74,7 @@ export class ProductsService {
         date_revision: product.date_revision,
       },
       {
-        headers: this._getHeaders(),
+        headers: this.getHeaders(),
       }
     );
   }

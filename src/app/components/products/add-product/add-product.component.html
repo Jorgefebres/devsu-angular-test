@@ -3,10 +3,7 @@
   <div class="divider-container">
     <div class="divider"></div>
   </div>
-  <form
-    [formGroup]="productForm"
-    (ngSubmit)="isEditMode ? updateProduct() : addProduct()"
-  >
+  <form [formGroup]="productForm" (ngSubmit)="addOrUpdateProduct()">
     <div class="form-group-container">
       <div class="form-group">
         <label for="id">Id:</label>

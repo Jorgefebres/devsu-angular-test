@@ -74,9 +74,10 @@ export class ProductListComponent {
       this.productsService
         .deleteProduct(this.selectedProductForDelete.id)
         .subscribe(() => {
-          console.log('aqui');
+          console.log('acanga');
           this.fetchProducts();
           this.cancelDelete();
+          window.location.reload();
         });
     }
   }

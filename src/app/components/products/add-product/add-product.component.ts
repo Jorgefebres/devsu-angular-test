@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Product } from '../../../interfaces/product.interface';
 import { futureDateValidator } from '../../../validators/date-validator';
@@ -9,8 +9,9 @@ import {
   getFormattedDateToTime,
 } from '../../../utils/date-functions';
 import { ProductsService } from '../../../services/products.service';
-import { catchError, take, throwError } from 'rxjs';
+import { catchError, take, switchMap, finalize } from 'rxjs/operators';
 import { Router } from '@angular/router';
+import { Observable, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-add-product',
@@ -18,17 +19,12 @@ import { Router } from '@angular/router';
   styleUrls: ['./add-product.component.scss'],
   providers: [DatePipe],
 })
-export class AddProductComponent implements OnInit {
+export class AddProductComponent implements OnInit, OnDestroy {
   productForm!: FormGroup;
-  startDate: string;
-  dateFormat = 'dd/MM/yyyy';
   loading = false;
   hasError = false;
-  errorCode = 0;
-  errorMessage = '';
   isDuplicateId = false;
   isEditMode = false;
-  productId!: string;
   selectedProduct: Product | null = null;
 
   constructor(
@@ -36,52 +32,21 @@ export class AddProductComponent implements OnInit {
     private datePipe: DatePipe,
     private productsService: ProductsService,
     private router: Router
-  ) {
-    this.startDate =
-      datePipe.transform(
-        new Date().setDate(new Date().getDate()),
-        this.dateFormat
-      ) || '';
-  }
-  async ngOnInit(): Promise<void> {
-    this.getSelectedProduct();
-    this.initForm();
-  }
+  ) {}
 
-  getSelectedProduct() {
-    this.productsService
-      .getSelectedProduct()
-      .pipe(take(1))
-      .subscribe((selectedProduct) => {
-        if (selectedProduct) {
-          console.log(selectedProduct);
-          this.isEditMode = true;
-          this.selectedProduct = {
-            ...selectedProduct,
-            date_release:
-              this.datePipe.transform(
-                selectedProduct.date_release,
-                'dd/MM/yyyy'
-              ) || '',
-            date_revision:
-              this.datePipe.transform(
-                selectedProduct.date_revision,
-                'dd/MM/yyyy'
-              ) || '',
-          };
-          console.log(this.selectedProduct);
-        }
-      });
+  ngOnInit(): void {
+    this.getProductData();
+    this.initForm();
   }
 
   ngOnDestroy(): void {
     this.productsService.clearSelectedProduct();
   }
 
-  initForm() {
+  initForm(): void {
     this.productForm = this.formBuilder.group({
       id: [
-        this.isEditMode ? this.selectedProduct?.id : '',
+        this.selectedProduct?.id,
         [
           Validators.required,
           Validators.minLength(3),
@@ -89,7 +54,7 @@ export class AddProductComponent implements OnInit {
         ],
       ],
       name: [
-        this.isEditMode ? this.selectedProduct?.name : '',
+        this.selectedProduct?.name,
         [
           Validators.required,
           Validators.minLength(5),
@@ -97,35 +62,62 @@ export class AddProductComponent implements OnInit {
         ],
       ],
       description: [
-        this.isEditMode ? this.selectedProduct?.description : '',
+        this.selectedProduct?.description,
         [
           Validators.required,
           Validators.minLength(10),
           Validators.maxLength(200),
         ],
       ],
-      logo: [
-        this.isEditMode ? this.selectedProduct?.logo : '',
-        [Validators.required],
-      ],
+      logo: [this.selectedProduct?.logo, [Validators.required]],
       date_release: [
-        this.isEditMode ? this.selectedProduct?.date_release.toString() : '',
+        this.selectedProduct?.date_release,
         [Validators.required, futureDateValidator()],
       ],
       date_revision: [
-        {
-          value: this.isEditMode
-            ? this.selectedProduct?.date_revision.toString()
-            : '',
-          disabled: true,
-        },
+        { value: this.selectedProduct?.date_revision, disabled: true },
         [Validators.required, futureDateValidator()],
       ],
     });
     this.getRevisionDateValue();
   }
 
-  getRevisionDateValue() {
+  async getProductData(): Promise<void> {
+    this.productsService
+      .getSelectedProduct()
+      .pipe(take(1))
+      .subscribe((selectedProduct) => {
+        if (selectedProduct) {
+          this.isEditMode = true;
+          this.selectedProduct = this.transformProductDates(selectedProduct);
+        } else {
+          this.selectedProduct = this.getDefaultProduct();
+        }
+      });
+  }
+
+  getDefaultProduct(): Product {
+    return {
+      id: '',
+      name: '',
+      description: '',
+      logo: '',
+      date_release: '',
+      date_revision: '',
+    };
+  }
+
+  transformProductDates(product: Product): Product {
+    return {
+      ...product,
+      date_release:
+        this.datePipe.transform(product?.date_release, 'dd/MM/yyyy') || '',
+      date_revision:
+        this.datePipe.transform(product?.date_revision, 'dd/MM/yyyy') || '',
+    };
+  }
+
+  getRevisionDateValue(): void {
     this.productForm
       .get('date_release')
       ?.valueChanges.subscribe((initialDate) => {
@@ -144,98 +136,69 @@ export class AddProductComponent implements OnInit {
       });
   }
 
-  addProduct(): void {
+  addOrUpdateProduct(): void {
     if (this.productForm.valid) {
       this.loading = true;
-      const newProduct: Product = {
-        ...this.productForm.value,
-        date_release: getFormattedDateToTime(
-          this.productForm.get('date_release')?.value
-        ),
-        date_revision: getFormattedDateToTime(
-          this.productForm.get('date_revision')?.value
-        ),
-      };
-      this.productsService
-        .verifyIfProductExist(newProduct.id)
+      const newProduct: Product = this.getProductFromForm();
+      this.verifyProductExistence(newProduct.id)
         .pipe(
-          catchError((error) => {
-            console.error('Error verifyign product existence:', error);
-            this.hasError = true;
-            this.loading = false;
-            return throwError(error);
-          })
+          switchMap((exists: boolean) =>
+            exists && !this.isEditMode
+              ? throwError('Duplicate ID')
+              : this.addOrUpdate(newProduct)
+          ),
+          catchError((error) => this.handleProductError(error)),
+          finalize(() => (this.loading = false))
         )
-        .subscribe((exists: boolean) => {
-          if (!exists) {
-            this.productsService
-              .addProduct(newProduct)
-              .pipe(
-                catchError((error) => {
-                  console.error('Error fetching products:', error);
-                  this.hasError = true;
-                  this.loading = false;
-                  return throwError(error);
-                })
-              )
-              .subscribe((product: Product) => {
-                console.log('product added: ', product);
-                this.loading = false;
-                this.resetForm();
-                this.goToProductList();
-              });
-          } else {
-            this.loading = false;
-            this.isDuplicateId = exists;
-            this.updateIdError();
-          }
-        });
+        .subscribe(() => this.handleSuccess());
     }
   }
 
-  updateProduct(): void {
-    if (this.productForm.valid) {
-      this.loading = true;
-      const newProduct: Product = {
-        ...this.productForm.value,
-        date_release: getFormattedDateToTime(
-          this.productForm.get('date_release')?.value
-        ),
-        date_revision: getFormattedDateToTime(
-          this.productForm.get('date_revision')?.value
-        ),
-      };
-      this.productsService
-        .updateProduct(newProduct)
-        .pipe(
-          catchError((error) => {
-            console.error('Error updating product:', error);
-            this.hasError = true;
-            this.loading = false;
-            return throwError(error);
-          })
-        )
-        .subscribe((product: Product) => {
-          console.log('product updated: ', product);
-          this.loading = false;
-          this.resetForm();
-          this.goToProductList();
-        });
-    }
+  verifyProductExistence(productId: string): Observable<boolean> {
+    return this.productsService.verifyIfProductExist(productId);
   }
 
-  private updateIdError(): void {
+  addOrUpdate(newProduct: Product): Observable<Product> {
+    return this.isEditMode
+      ? this.productsService.updateProduct(newProduct)
+      : this.productsService.addProduct(newProduct);
+  }
+
+  getProductFromForm(): Product {
+    return {
+      ...this.productForm.value,
+      date_release: getFormattedDateToTime(
+        this.productForm.get('date_release')?.value
+      ),
+      date_revision: getFormattedDateToTime(
+        this.productForm.get('date_revision')?.value
+      ),
+    };
+  }
+
+  handleProductError(error: any): Observable<never> {
+    console.error('Error during product operation:', error);
+    this.hasError = true;
+    if (error === 'Duplicate ID') {
+      this.isDuplicateId = true;
+      this.updateIdError();
+    }
+    return throwError(error);
+  }
+
+  handleSuccess(): void {
+    this.resetForm();
+    this.goToProductList();
+  }
+
+  updateIdError(): void {
     const idControl = this.productForm.get('id');
     if (idControl) {
-      if (this.isDuplicateId) {
-        idControl.setErrors({ duplicateId: true });
-      } else {
-        idControl.setErrors(null);
-      }
+      idControl.setErrors({ duplicateId: true });
     }
   }
 
-  goToProductList() {
+  goToProductList(): void {
     this.router.navigate(['products/product-list']);
   }
 

@@ -48,7 +48,7 @@
         </tbody>
       </table>
     </div>
-    <div class="pagination">
+    <div *ngIf="paginatedProducts.length > 0" class="pagination">
       <label
         >{{ paginatedProducts.length }}/
         {{ products.length }} Resultado(s)</label

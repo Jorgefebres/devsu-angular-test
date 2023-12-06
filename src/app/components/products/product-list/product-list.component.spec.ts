@@ -4,50 +4,54 @@ import { of } from 'rxjs';
 import { ProductListComponent } from './product-list.component';
 import { ProductsService } from '../../../services/products.service';
 import { Router } from '@angular/router';
+import { Product } from '../../../interfaces/product.interface';
 
 describe('ProductListComponent', () => {
   let component: ProductListComponent;
   let fixture: ComponentFixture<ProductListComponent>;
-  let productsServiceMock: jest.Mocked<ProductsService>;
-  let router: Router;
+  let productsServiceMock: Partial<ProductsService>;
+  let routerMock: Partial<Router>;
 
   beforeEach(() => {
     productsServiceMock = {
-      getProducts: jest.fn(),
-    } as unknown as jest.Mocked<ProductsService>;
+      getProducts: jest.fn(() => of([])),
+      deleteProduct: jest.fn(() => of(null)),
+      setSelectedProduct: jest.fn(),
+    };
+
+    routerMock = {
+      navigate: jest.fn(),
+    };
 
     TestBed.configureTestingModule({
       declarations: [ProductListComponent],
       imports: [RouterTestingModule],
-      providers: [{ provide: ProductsService, useValue: productsServiceMock }],
-    }).compileComponents();
+      providers: [
+        { provide: ProductsService, useValue: productsServiceMock },
+        { provide: Router, useValue: routerMock },
+      ],
+    });
 
     fixture = TestBed.createComponent(ProductListComponent);
     component = fixture.componentInstance;
-    router = TestBed.inject(Router);
   });
 
-  it('should create', () => {
+  it('should create the component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should fetch products on ngOnInit', () => {
-    const mockProducts = [
-      {
-        id: 'trj-crd1',
-        name: 'Product 1',
-        description: '',
-        logo: '',
-        date_release: '',
-        date_revision: '',
-      },
-    ];
-    productsServiceMock.getProducts.mockReturnValue(of(mockProducts));
-
+  it('should fetch products on init', () => {
     component.ngOnInit();
 
     expect(productsServiceMock.getProducts).toHaveBeenCalled();
-    expect(component.products).toEqual(mockProducts);
+  });
+
+  it('should set currentPage on onPageChange', () => {
+    const newPage = 2;
+
+    component.onPageChange(newPage);
+
+    expect(component.currentPage).toEqual(newPage);
   });
 
   it('should calculate totalPages correctly', () => {
@@ -82,17 +86,82 @@ describe('ProductListComponent', () => {
     expect(component.totalPages).toBe(2);
   });
 
-  it('should navigate to "products/add-product" on onAddNewProduct', () => {
-    const navigateSpy = jest.spyOn(router, 'navigate');
-    component.goToAddProduct();
+  it('should set pageSize on onMaxPageChange', () => {
+    const newSize = 10;
 
-    expect(navigateSpy).toHaveBeenCalledWith(['products/add-product']);
+    component.onMaxPageChange(newSize);
+
+    expect(component.pageSize).toEqual(newSize);
   });
 
-  it('should update currentPage on onPageChange', () => {
-    component.onPageChange(3);
+  it('should navigate to add-product on goToAddProduct', () => {
+    component.goToAddProduct();
 
-    expect(component.currentPage).toBe(3);
+    expect(routerMock.navigate).toHaveBeenCalledWith(['products/add-product']);
+  });
+
+  it('should set selectedProductForDelete and show delete modal on delete action', () => {
+    const product: Product = {
+      id: 'trj-crd',
+      name: 'Product 1',
+      description: '',
+      logo: '',
+      date_release: '',
+      date_revision: '',
+    };
+    const event = { target: { value: 'delete' } } as any;
+
+    component.onActionChange(event, product);
+
+    expect(component.selectedProductForDelete).toEqual(product);
+    expect(component.showDeleteModal).toBe(true);
+    expect(productsServiceMock.setSelectedProduct).not.toHaveBeenCalled();
+    expect(routerMock.navigate).not.toHaveBeenCalled();
+  });
+
+  it('should set selectedProductForDelete to undefined and show delete modal on edit action', () => {
+    const product: Product = {
+      id: 'trj-crd',
+      name: 'Product 1',
+      description: '',
+      logo: '',
+      date_release: '',
+      date_revision: '',
+    };
+    const event = { target: { value: 'edit' } } as any;
+
+    component.onActionChange(event, product);
+
+    expect(component.selectedProductForDelete).toBeNull();
+    expect(component.showDeleteModal).toBe(false);
+    expect(productsServiceMock.setSelectedProduct).toHaveBeenCalledWith(
+      product
+    );
+    expect(routerMock.navigate).toHaveBeenCalledWith(['products/add-product']);
+  });
+
+  it('should delete product on deleteProduct', () => {
+    const product: Product = {
+      id: 'trj-crd',
+      name: 'Product 1',
+      description: '',
+      logo: '',
+      date_release: '',
+      date_revision: '',
+    };
+    component.selectedProductForDelete = product;
+
+    component.deleteProduct();
+
+    expect(productsServiceMock.deleteProduct).toHaveBeenCalledWith(product.id);
+    expect(component.selectedProductForDelete).toBeNull();
+  });
+
+  it('should cancel delete on cancelDelete', () => {
+    component.cancelDelete();
+
+    expect(component.showDeleteModal).toBe(false);
+    expect(component.selectedProductForDelete).toBeNull();
   });
 
   it('should calculate paginatedProducts correctly', () => {
