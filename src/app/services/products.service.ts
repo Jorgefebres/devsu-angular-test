@@ -24,4 +24,21 @@ export class ProductsService {
       headers: this._getHeaders(),
     });
   }
+
+  addProduct(product: Product): Observable<Product> {
+    return this.http.post<Product>(
+      `${this.apiUrl}/bp/products`,
+      {
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        logo: product.logo,
+        date_release: product.date_release,
+        date_revision: product.date_revision,
+      },
+      {
+        headers: this._getHeaders(),
+      }
+    );
+  }
 }

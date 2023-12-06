@@ -13,6 +13,7 @@ export class ProductListComponent {
   pageSize = 5;
   currentPage = 1;
   searchTerm = '';
+  loading = true;
 
   constructor(
     private productsService: ProductsService,
@@ -34,6 +35,7 @@ export class ProductListComponent {
   fetchProducts(): void {
     this.productsService.getProducts().subscribe((products: Array<Product>) => {
       this.products = products;
+      this.loading = false;
     });
   }
 
@@ -45,7 +47,7 @@ export class ProductListComponent {
     this.currentPage = page;
   }
 
-  onAddNewProduct() {
+  goToAddProduct() {
     this.router.navigate(['products/add-product']);
   }
 

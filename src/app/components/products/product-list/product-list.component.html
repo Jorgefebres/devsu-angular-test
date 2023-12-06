@@ -1,46 +1,51 @@
 <div class="product-list">
-  <div class="actions-container">
-    <div class="search-container">
-      <input
-        type="text"
-        id="search"
-        [(ngModel)]="searchTerm"
-        placeholder="Search..."
-      />
-    </div>
-    <div class="add-product-button-container">
-      <button (click)="onAddNewProduct()">Agregar</button>
-    </div>
+  <div *ngIf="loading; else content">
+    <app-skeleton-loader [loadingLines]="5"></app-skeleton-loader>
   </div>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Logo</th>
-        <th>Nombre del producto</th>
-        <th>Descripción</th>
-        <th>Fecha de liberación</th>
-        <th>Fecha de reestructuración</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let product of paginatedProducts">
-        <td>
-          <img [src]="product.logo" alt="logo" width="50" height="30" />
-        </td>
-        <td>{{ product.name }}</td>
-        <td>{{ product.description }}</td>
-        <td>{{ product.date_release | date : "dd/MM/yyyy" }}</td>
-        <td>{{ product.date_revision | date : "dd/MM/yyyy" }}</td>
-      </tr>
-    </tbody>
-  </table>
+  <ng-template #content>
+    <div class="actions-container">
+      <div class="search-container">
+        <input
+          type="text"
+          id="search"
+          [(ngModel)]="searchTerm"
+          placeholder="Search..."
+        />
+      </div>
+      <div class="add-product-button-container">
+        <button (click)="goToAddProduct()">Agregar</button>
+      </div>
+    </div>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Logo</th>
+          <th>Nombre del producto</th>
+          <th>Descripción</th>
+          <th>Fecha de liberación</th>
+          <th>Fecha de reestructuración</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of paginatedProducts">
+          <td>
+            <img [src]="product.logo" alt="logo" width="50" height="30" />
+          </td>
+          <td>{{ product.name }}</td>
+          <td>{{ product.description }}</td>
+          <td>{{ product.date_release | date : "dd/MM/yyyy" }}</td>
+          <td>{{ product.date_revision | date : "dd/MM/yyyy" }}</td>
+        </tr>
+      </tbody>
+    </table>
 
-  <div class="pagination">
-    <label>{{ paginatedProducts.length }} Resultado(s)</label>
-    <select [(ngModel)]="currentPage" (change)="onPageChange(currentPage)">
-      <option *ngFor="let page of getPagesArray()" [value]="page">
-        {{ page }}
-      </option>
-    </select>
-  </div>
+    <div class="pagination">
+      <label>{{ paginatedProducts.length }} Resultado(s)</label>
+      <select [(ngModel)]="currentPage" (change)="onPageChange(currentPage)">
+        <option *ngFor="let page of getPagesArray()" [value]="page">
+          {{ page }}
+        </option>
+      </select>
+    </div>
+  </ng-template>
 </div>

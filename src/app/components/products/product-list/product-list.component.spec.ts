@@ -84,7 +84,7 @@ describe('ProductListComponent', () => {
 
   it('should navigate to "products/add-product" on onAddNewProduct', () => {
     const navigateSpy = jest.spyOn(router, 'navigate');
-    component.onAddNewProduct();
+    component.goToAddProduct();
 
     expect(navigateSpy).toHaveBeenCalledWith(['products/add-product']);
   });

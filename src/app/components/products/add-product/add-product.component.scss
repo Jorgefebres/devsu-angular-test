@@ -1,23 +1,27 @@
 .add-product {
-  max-width: 400px;
+  max-width: 800px;
   margin: auto;
+  padding: 0 2em;
 }
-
-.form-group {
-  margin-bottom: 15px;
+h2 {
+  text-align: center;
+  margin-bottom: 1em;
 }
-
 label {
   display: block;
-  margin-bottom: 5px;
+  margin-bottom: 0.5em;
 }
+
 .actions {
   display: flex;
+  flex-direction: row;
   justify-content: center;
 }
+
 .reset-button {
   background-color: var(--color-brand-sky-blue);
   color: var(--color-brand-blue);
+  margin-right: 1.25em;
 }
 
 .send-button {
@@ -26,7 +30,37 @@ label {
 }
 
 .send-button:disabled {
-  margin-left: 5em;
   background-color: var(--color-brand-disabled-yellow);
-  color: var(--color-brand-disabled-blue);
+  color: var(--color-brand-disabled-gray);
+}
+
+.form-group-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.form-group {
+  flex: 1;
+  margin-right: 1.25em;
+  margin-bottom: 1em;
+}
+
+@media (max-width: 767px) {
+  .form-group-container {
+    flex-direction: column;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .reset-button {
+    margin-right: 0;
+    margin-bottom: 1.25em;
+  }
+
+  .form-group {
+    margin-right: 0;
+  }
 }

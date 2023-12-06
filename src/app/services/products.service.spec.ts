@@ -29,7 +29,7 @@ describe('ProductsService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should retrieve products from the API', () => {
+  it('should get products from the API', () => {
     const mockProducts: Product[] = [
       {
         id: 1,
@@ -93,5 +93,29 @@ describe('ProductsService', () => {
     expect(req.request.headers.get('authorId')).toEqual('500');
 
     req.flush(mockProducts);
+  });
+
+  it('should add a new product', () => {
+    const apiUrl = `${environment.baseUrl}/bp/products`;
+    const mockProduct: Product = {
+      id: 'trj-crd2000test',
+      name: 'Test Product',
+      description: 'Product Description',
+      logo: 'test_logo.jpg',
+      date_release: '01/01/2023',
+      date_revision: '01/01/2024',
+    };
+
+    service.addProduct(mockProduct).subscribe((response) => {
+      expect(response).toEqual(mockProduct);
+    });
+
+    const req = httpTestingController.expectOne(apiUrl);
+
+    expect(req.request.method).toBe('POST');
+    expect(req.request.headers.get('Content-Type')).toBe('application/json');
+    expect(req.request.headers.get('Author-Id')).toBe('500');
+
+    req.flush(mockProduct);
   });
 });

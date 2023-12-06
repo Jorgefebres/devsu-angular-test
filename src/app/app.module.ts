@@ -8,6 +8,7 @@ import { ProductsComponent } from './components/products/products.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AddProductComponent } from './components/products/add-product/add-product.component';
 import { HttpClientModule } from '@angular/common/http';
+import { SkeletonLoaderComponent } from './components/ui/skeleton-loader/skeleton-loader.component';
 
 @NgModule({
   declarations: [
@@ -15,6 +16,7 @@ import { HttpClientModule } from '@angular/common/http';
     ProductsComponent,
     ProductListComponent,
     AddProductComponent,
+    SkeletonLoaderComponent,
   ],
   imports: [
     BrowserModule,

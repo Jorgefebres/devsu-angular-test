@@ -5,7 +5,7 @@ export function futureDateValidator(): ValidatorFn {
     if (!control.value) {
       return null;
     }
-    const dateParts = control.value.split('/');
+    const dateParts = control.value.split(/-|\//);
 
     const inputDate = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
     const currentDate = new Date();
