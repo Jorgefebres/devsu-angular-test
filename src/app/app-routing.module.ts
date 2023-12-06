@@ -27,6 +27,10 @@ const routes: Routes = [
         path: 'add-product',
         component: AddProductComponent,
       },
+      {
+        path: 'add-product/:id',
+        component: AddProductComponent,
+      },
     ],
   },
 ];

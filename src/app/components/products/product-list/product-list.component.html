@@ -16,31 +16,43 @@
         <button (click)="goToAddProduct()">Agregar</button>
       </div>
     </div>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Logo</th>
-          <th>Nombre del producto</th>
-          <th>Descripción</th>
-          <th>Fecha de liberación</th>
-          <th>Fecha de reestructuración</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let product of paginatedProducts">
-          <td>
-            <img [src]="product.logo" alt="logo" width="50" height="30" />
-          </td>
-          <td>{{ product.name }}</td>
-          <td>{{ product.description }}</td>
-          <td>{{ product.date_release | date : "dd/MM/yyyy" }}</td>
-          <td>{{ product.date_revision | date : "dd/MM/yyyy" }}</td>
-        </tr>
-      </tbody>
-    </table>
-
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Logo</th>
+            <th>Nombre del producto</th>
+            <th>Descripción</th>
+            <th>Fecha de liberación</th>
+            <th>Fecha de reestructuración</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of paginatedProducts">
+            <td>
+              <img [src]="product.logo" alt="logo" width="50" height="30" />
+            </td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.description }}</td>
+            <td>{{ product.date_release | date : "dd/MM/yyyy" }}</td>
+            <td>{{ product.date_revision | date : "dd/MM/yyyy" }}</td>
+            <td>
+              <select (change)="onActionChange($event, product)">
+                <option value="" disabled selected>Seleccionar...</option>
+                <option value="edit">Editar</option>
+                <option value="delete">Eliminar</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     <div class="pagination">
-      <label>{{ paginatedProducts.length }} Resultado(s)</label>
+      <label
+        >{{ paginatedProducts.length }}/
+        {{ products.length }} Resultado(s)</label
+      >
       <button
         (click)="onPageChange(currentPage - 1)"
         [disabled]="currentPage === 1"
@@ -59,6 +71,19 @@
           {{ pageSize }}
         </option>
       </select>
+    </div>
+
+    <div *ngIf="showDeleteModal" class="modal-container">
+      <div class="modal-content">
+        <p>
+          Estas seguro de eliminar el producto
+          {{ selectedProductForDelete?.name }}?
+        </p>
+        <div class="modal-buttons">
+          <button (click)="deleteProduct()" class="yes">Yes</button>
+          <button (click)="cancelDelete()" class="no">No</button>
+        </div>
+      </div>
     </div>
   </ng-template>
 </div>

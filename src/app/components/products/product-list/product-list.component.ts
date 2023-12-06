@@ -15,6 +15,8 @@ export class ProductListComponent {
   currentPage = 1;
   searchTerm = '';
   loading = true;
+  showDeleteModal = false;
+  selectedProductForDelete: Product | null = null;
 
   constructor(
     private productsService: ProductsService,
@@ -54,5 +56,33 @@ export class ProductListComponent {
 
   goToAddProduct() {
     this.router.navigate(['products/add-product']);
+  }
+
+  onActionChange(event: any, product: Product) {
+    const action = (event.target as HTMLSelectElement).value;
+    if (action === 'delete') {
+      this.selectedProductForDelete = product;
+      this.showDeleteModal = true;
+    } else if (action === 'edit') {
+      this.productsService.setSelectedProduct(product);
+      this.router.navigate(['products/add-product']);
+    }
+  }
+
+  deleteProduct(): void {
+    if (this.selectedProductForDelete) {
+      this.productsService
+        .deleteProduct(this.selectedProductForDelete.id)
+        .subscribe(() => {
+          console.log('aqui');
+          this.fetchProducts();
+          this.cancelDelete();
+        });
+    }
+  }
+
+  cancelDelete(): void {
+    this.showDeleteModal = false;
+    this.selectedProductForDelete = null;
   }
 }

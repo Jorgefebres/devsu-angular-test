@@ -1,5 +1,8 @@
 <div class="add-product">
-  <h2>Formulario de Registro</h2>
+  <h2>{{ isEditMode ? "Editar Producto" : "Formulario de Registro" }}</h2>
+  <div class="divider-container">
+    <div class="divider"></div>
+  </div>
   <form [formGroup]="productForm" (ngSubmit)="addProduct()">
     <div class="form-group-container">
       <div class="form-group">
@@ -186,7 +189,7 @@
           type="submit"
           [disabled]="!productForm.valid"
         >
-          Enviar
+          {{ isEditMode ? "Actualizar" : "Enviar" }}
         </button>
       </div>
     </ng-template>

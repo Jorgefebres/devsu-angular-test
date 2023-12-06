@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { Product } from '../interfaces/product.interface';
 import { environment } from '../../environments/environment';
 import { HEADERS } from '../constants/constants';
@@ -10,6 +10,8 @@ import { HEADERS } from '../constants/constants';
 })
 export class ProductsService {
   private apiUrl = environment.baseUrl;
+  private selectedProductSubject = new BehaviorSubject<Product | null>(null);
+  selectedProduct$ = this.selectedProductSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -49,5 +51,43 @@ export class ProductsService {
         headers: this._getHeaders(),
       }
     );
+  }
+
+  deleteProduct(id: string): Observable<any> {
+    let queryParams = new HttpParams();
+    queryParams = queryParams.append('id', id);
+    return this.http.delete<any>(`${this.apiUrl}/bp/products`, {
+      headers: this._getHeaders(),
+      params: queryParams,
+    });
+  }
+
+  updateProduct(product: Product): Observable<Product> {
+    return this.http.put<Product>(
+      `${this.apiUrl}/bp/products`,
+      {
+        id: product.id,
+        name: product.name,
+        description: product.description,
+        logo: product.logo,
+        date_release: product.date_release,
+        date_revision: product.date_revision,
+      },
+      {
+        headers: this._getHeaders(),
+      }
+    );
+  }
+
+  setSelectedProduct(product: Product): void {
+    this.selectedProductSubject.next(product);
+  }
+
+  getSelectedProduct(): Observable<Product | null> {
+    return this.selectedProductSubject.asObservable();
+  }
+
+  clearSelectedProduct(): void {
+    this.selectedProductSubject.next(null);
   }
 }

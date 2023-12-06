@@ -34,7 +34,7 @@ describe('ProductListComponent', () => {
   it('should fetch products on ngOnInit', () => {
     const mockProducts = [
       {
-        id: 1,
+        id: 'trj-crd1',
         name: 'Product 1',
         description: '',
         logo: '',
@@ -53,7 +53,7 @@ describe('ProductListComponent', () => {
   it('should calculate totalPages correctly', () => {
     component.products = [
       {
-        id: 1,
+        id: 'trj-crd1',
         name: 'Product 1',
         description: '',
         logo: '',
@@ -61,7 +61,7 @@ describe('ProductListComponent', () => {
         date_revision: '',
       },
       {
-        id: 2,
+        id: 'trj-crd2',
         name: 'Product 2',
         description: '',
         logo: '',
@@ -69,7 +69,7 @@ describe('ProductListComponent', () => {
         date_revision: '',
       },
       {
-        id: 3,
+        id: 'trj-crd3',
         name: 'Product 3',
         description: '',
         logo: '',
@@ -98,7 +98,7 @@ describe('ProductListComponent', () => {
   it('should calculate paginatedProducts correctly', () => {
     component.products = [
       {
-        id: 1,
+        id: 'trj-crd1',
         name: 'Product 1',
         description: '',
         logo: '',
@@ -106,7 +106,7 @@ describe('ProductListComponent', () => {
         date_revision: '',
       },
       {
-        id: 2,
+        id: 'trj-crd2',
         name: 'Product 2',
         description: '',
         logo: '',
@@ -114,7 +114,7 @@ describe('ProductListComponent', () => {
         date_revision: '',
       },
       {
-        id: 3,
+        id: 'trj-crd3',
         name: 'Product 3',
         description: '',
         logo: '',
@@ -130,7 +130,7 @@ describe('ProductListComponent', () => {
 
     expect(paginatedProducts).toEqual([
       {
-        id: 3,
+        id: 'trj-crd3',
         name: 'Product 3',
         description: '',
         logo: '',

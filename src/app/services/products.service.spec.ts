@@ -32,7 +32,7 @@ describe('ProductsService', () => {
   it('should get products from the API', () => {
     const mockProducts: Product[] = [
       {
-        id: 1,
+        id: 'trj-crd1',
         logo: 'logo.jpg',
         name: 'nombre del producto 1',
         description: 'Descripción',
@@ -40,7 +40,7 @@ describe('ProductsService', () => {
         date_revision: '01/01/2001',
       },
       {
-        id: 2,
+        id: 'trj-crd2',
         logo: 'logo.jpg',
         name: 'nombre del producto 2',
         description: 'Descripción',
@@ -48,7 +48,7 @@ describe('ProductsService', () => {
         date_revision: '01/01/2001',
       },
       {
-        id: 3,
+        id: 'trj-crd3',
         logo: 'logo.jpg',
         name: 'nombre del producto 3',
         description: 'Descripción',
@@ -56,7 +56,7 @@ describe('ProductsService', () => {
         date_revision: '01/01/2001',
       },
       {
-        id: 4,
+        id: 'trj-crd4',
         logo: 'logo.jpg',
         name: 'nombre del producto 4',
         description: 'Descripción',
@@ -64,7 +64,7 @@ describe('ProductsService', () => {
         date_revision: '01/01/2001',
       },
       {
-        id: 5,
+        id: 'trj-crd5',
         logo: 'logo.jpg',
         name: 'nombre del producto 5',
         description: 'Descripción',
@@ -72,7 +72,7 @@ describe('ProductsService', () => {
         date_revision: '01/01/2001',
       },
       {
-        id: 6,
+        id: 'trj-crd6',
         logo: 'logo.jpg',
         name: 'nombre del producto 6',
         description: 'Descripción',
@@ -98,7 +98,7 @@ describe('ProductsService', () => {
   it('should add a new product', () => {
     const apiUrl = `${environment.baseUrl}/bp/products`;
     const mockProduct: Product = {
-      id: 'trj-crd2000test',
+      id: 'trj-test',
       name: 'Test Product',
       description: 'Product Description',
       logo: 'test_logo.jpg',
