@@ -1,29 +1,18 @@
-import {
-  AbstractControl,
-  FormControl,
-  ValidationErrors,
-  ValidatorFn,
-} from '@angular/forms';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
-export class DateValidators {
-  static greaterThan(initialDate: Date): ValidatorFn {
-    return (endControl: AbstractControl): ValidationErrors | null => {
-      const startDate: Date = initialDate;
-      const endDate: Date = endControl.value;
-      if (!startDate || !endDate) {
-        return null;
-      }
-      if (startDate >= endDate) {
-        return { greaterThan: true };
-      }
+export function futureDateValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    if (!control.value) {
       return null;
-    };
-  }
-  static LessThanToday(control: FormControl): ValidationErrors | null {
-    let today: Date = new Date();
+    }
+    const dateParts = control.value.split('/');
 
-    if (new Date(control.value) > today) return { LessThanToday: true };
+    const inputDate = new Date(+dateParts[2], dateParts[1] - 1, +dateParts[0]);
+    const currentDate = new Date();
 
+    if (inputDate < currentDate) {
+      return { futureDate: true };
+    }
     return null;
-  }
+  };
 }

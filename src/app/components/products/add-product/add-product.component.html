@@ -27,7 +27,7 @@
     </div>
     <div class="form-group">
       <label for="description">Descripción:</label>
-      <textarea id="description" formControlName="description"></textarea>
+      <input id="description" formControlName="description" />
       <div
         *ngIf="
           productForm.get('description')?.hasError('required') &&
@@ -53,7 +53,7 @@
     <div class="form-group">
       <label for="date_release">Fecha Liberación:</label>
       <input type="text" id="date_release" formControlName="date_release" />
-      <pre>{{ productForm.get("date_release")?.errors | json }}</pre>
+      <!-- <pre>{{ productForm.get("date_release")?.errors | json }}</pre> -->
       <div
         *ngIf="
           productForm.get('date_release')?.hasError('required') &&
@@ -76,9 +76,11 @@
         Este campo es requerido!
       </div>
     </div>
-    <button class="reset-button">Reiniciar</button>
-    <button class="send-button" type="submit" [disabled]="!productForm.valid">
-      Enviar
-    </button>
+    <div class="actions">
+      <button class="reset-button" (click)="resetForm()">Reiniciar</button>
+      <button class="send-button" type="submit" [disabled]="!productForm.valid">
+        Enviar
+      </button>
+    </div>
   </form>
 </div>
