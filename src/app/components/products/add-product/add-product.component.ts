@@ -9,7 +9,7 @@ import {
   getFormattedDateToTime,
 } from '../../../utils/date-functions';
 import { ProductsService } from '../../../services/products.service';
-import { catchError, throwError } from 'rxjs';
+import { catchError, take, throwError } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Component({
@@ -44,18 +44,34 @@ export class AddProductComponent implements OnInit {
       ) || '';
   }
   async ngOnInit(): Promise<void> {
-    this.initForm();
     this.getSelectedProduct();
+    this.initForm();
   }
 
   getSelectedProduct() {
-    this.productsService.getSelectedProduct().subscribe((selectedProduct) => {
-      if (selectedProduct) {
-        this.isEditMode = true;
-        this.selectedProduct = selectedProduct;
-        this.initForm();
-      }
-    });
+    this.productsService
+      .getSelectedProduct()
+      .pipe(take(1))
+      .subscribe((selectedProduct) => {
+        if (selectedProduct) {
+          console.log(selectedProduct);
+          this.isEditMode = true;
+          this.selectedProduct = {
+            ...selectedProduct,
+            date_release:
+              this.datePipe.transform(
+                selectedProduct.date_release,
+                'dd/MM/yyyy'
+              ) || '',
+            date_revision:
+              this.datePipe.transform(
+                selectedProduct.date_revision,
+                'dd/MM/yyyy'
+              ) || '',
+          };
+          console.log(this.selectedProduct);
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -89,25 +105,17 @@ export class AddProductComponent implements OnInit {
         ],
       ],
       logo: [
-        this.isEditMode
-          ? this.selectedProduct?.logo
-          : 'https://www.visa.com.ec/dam/VCOM/regional/lac/SPA/Default/Pay%20With%20Visa/Tarjetas/visa-signature-400x225.jpg',
+        this.isEditMode ? this.selectedProduct?.logo : '',
         [Validators.required],
       ],
       date_release: [
-        this.isEditMode
-          ? getFormattedDate(
-              this.selectedProduct?.date_release.toString() || ''
-            )
-          : '',
+        this.isEditMode ? this.selectedProduct?.date_release.toString() : '',
         [Validators.required, futureDateValidator()],
       ],
       date_revision: [
         {
           value: this.isEditMode
-            ? getFormattedDate(
-                this.selectedProduct?.date_revision.toString() || ''
-              )
+            ? this.selectedProduct?.date_revision.toString()
             : '',
           disabled: true,
         },
