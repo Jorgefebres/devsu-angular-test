@@ -9,9 +9,15 @@ import {
   getFormattedDateToTime,
 } from '../../../utils/date-functions';
 import { ProductsService } from '../../../services/products.service';
-import { catchError, take, switchMap, finalize } from 'rxjs/operators';
+import {
+  catchError,
+  take,
+  switchMap,
+  finalize,
+  takeUntil,
+} from 'rxjs/operators';
 import { Router } from '@angular/router';
-import { Observable, throwError } from 'rxjs';
+import { Observable, Subject, of, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-add-product',
@@ -25,6 +31,9 @@ export class AddProductComponent implements OnInit, OnDestroy {
   hasError = false;
   isDuplicateId = false;
   isEditMode = false;
+  selectedProduct$: Observable<Product | null>;
+  unsubscribe$ = new Subject<void>();
+
   selectedProduct: Product | null = null;
 
   constructor(
@@ -32,7 +41,10 @@ export class AddProductComponent implements OnInit, OnDestroy {
     private datePipe: DatePipe,
     private productsService: ProductsService,
     private router: Router
-  ) {}
+  ) {
+    this.selectedProduct$ =
+      this.productsService.getSelectedProduct() || of(null);
+  }
 
   ngOnInit(): void {
     this.getProductData();
@@ -41,6 +53,8 @@ export class AddProductComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.productsService.clearSelectedProduct();
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   initForm(): void {
@@ -82,10 +96,9 @@ export class AddProductComponent implements OnInit, OnDestroy {
     this.getRevisionDateValue();
   }
 
-  async getProductData(): Promise<void> {
-    this.productsService
-      .getSelectedProduct()
-      .pipe(take(1))
+  getProductData(): void {
+    this.selectedProduct$
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe((selectedProduct) => {
         if (selectedProduct) {
           this.isEditMode = true;
@@ -127,11 +140,13 @@ export class AddProductComponent implements OnInit, OnDestroy {
             ?.setErrors({ invalidValue: true });
         } else {
           const newDate = getFormattedDate(initialDate);
-          const yearsAdded = addYearsToDate(newDate, 1);
-          this.productForm
-            .get('date_revision')
-            ?.setValue(this.datePipe.transform(yearsAdded, 'dd/MM/yyyy'));
-          this.productForm.get('date_revision')?.setErrors(null);
+          if (newDate) {
+            const yearsAdded = addYearsToDate(newDate, 1);
+            this.productForm
+              .get('date_revision')
+              ?.setValue(this.datePipe.transform(yearsAdded, 'dd/MM/yyyy'));
+            this.productForm.get('date_revision')?.setErrors(null);
+          }
         }
       });
   }

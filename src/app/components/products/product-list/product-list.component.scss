@@ -15,20 +15,30 @@
   overflow-x: auto;
 }
 
-.table {
+table {
   width: 100%;
   border-collapse: collapse;
-  margin-bottom: 20px;
+  margin-top: 1.25em;
+  background-color: #fff;
 }
 
-.table th,
-.table td {
-  padding: 10px;
-  border: 1px solid #ddd;
+th,
+td {
+  padding: 15px;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.table th {
-  background-color: #f2f2f2;
+th {
+  background-color: #f0f0f0;
+}
+
+tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tr:hover {
+  background-color: #e0e0e0;
 }
 
 .pagination {
@@ -70,6 +80,10 @@
   }
 }
 
+.modal-title {
+  padding-bottom: 4em;
+}
+
 .modal-container {
   position: fixed;
   top: 0;
@@ -88,14 +102,11 @@
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   text-align: center;
-}
-
-.modal-buttons {
-  margin-top: 15px;
+  height: 12em;
 }
 
 .modal-buttons button {
-  margin: 0 10px;
+  margin: 0 0.5em;
   padding: 8px 16px;
   border: none;
   border-radius: 4px;
@@ -103,11 +114,11 @@
 }
 
 .modal-buttons button.yes {
-  background-color: #d9534f; /* Bootstrap's danger color */
-  color: #fff;
+  background-color: var(--color-brand-yellow);
+  color: var(--color-brand-blue);
 }
 
 .modal-buttons button.no {
-  background-color: #5bc0de; /* Bootstrap's info color */
-  color: #fff;
+  background-color: var(--color-brand-sky-blue);
+  color: var(--color-brand-blue);
 }

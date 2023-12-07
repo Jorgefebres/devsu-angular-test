@@ -22,7 +22,7 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "jest --no-cache",
+    "test": "jest --runInBand",
     "test:coverage-d": "jest --coverageDirectory='coverage'",
     "test:coverage": "jest --coverage"
   },

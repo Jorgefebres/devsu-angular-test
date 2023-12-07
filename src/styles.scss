@@ -40,3 +40,13 @@ input {
   border: 1.5px solid #b8b9ba;
   border-radius: 5px;
 }
+
+.divider-container {
+  display: flex;
+  justify-content: center;
+  .divider {
+    width: 100%;
+    border-bottom: 2px solid #a9a9ab;
+    margin-bottom: 1.5em;
+  }
+}

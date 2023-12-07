@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { Product } from '../../../interfaces/product.interface';
 import { ProductsService } from '../../../services/products.service';
 import { Router } from '@angular/router';
+import { Observable, catchError, finalize, throwError } from 'rxjs';
 
 @Component({
   selector: 'app-product-list',
@@ -69,17 +70,27 @@ export class ProductListComponent {
     }
   }
 
-  deleteProduct(): void {
+  onDeleteProduct(): void {
     if (this.selectedProductForDelete) {
       this.productsService
         .deleteProduct(this.selectedProductForDelete.id)
-        .subscribe(() => {
-          console.log('acanga');
-          this.fetchProducts();
-          this.cancelDelete();
-          window.location.reload();
-        });
+        .pipe(
+          catchError((error) => this.handleDeleteError(error)),
+          finalize(() => (this.loading = false))
+        )
+        .subscribe(() => this.handleDeleteSuccess());
     }
+  }
+
+  handleDeleteError(error: any): Observable<never> {
+    console.log(error);
+    return throwError(error);
+  }
+
+  handleDeleteSuccess() {
+    console.log('success');
+    this.fetchProducts();
+    this.cancelDelete();
   }
 
   cancelDelete(): void {

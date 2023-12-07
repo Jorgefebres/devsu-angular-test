@@ -76,13 +76,3 @@ label {
   margin-top: 0.5em;
   color: var(--color-brand-error);
 }
-
-.divider-container {
-  display: flex;
-  justify-content: center;
-  .divider {
-    width: 100%;
-    border-bottom: 2px solid #a9a9ab;
-    margin-bottom: 1.5em;
-  }
-}

@@ -19,17 +19,17 @@ describe('date-functions', () => {
     it('should parse a date string and return a Date object', () => {
       const dateString = '01/01/2022';
       const result = getFormattedDate(dateString);
-      expect(result.getFullYear()).toBe(2022);
-      expect(result.getMonth()).toBe(0);
-      expect(result.getDate()).toBe(1);
+      expect(result?.getFullYear()).toBe(2022);
+      expect(result?.getMonth()).toBe(0);
+      expect(result?.getDate()).toBe(1);
     });
 
     it('should handle date string with different formats using /', () => {
       const dateString = '01/01/2022';
       const result = getFormattedDate(dateString);
-      expect(result.getFullYear()).toBe(2022);
-      expect(result.getMonth()).toBe(0);
-      expect(result.getDate()).toBe(1);
+      expect(result?.getFullYear()).toBe(2022);
+      expect(result?.getMonth()).toBe(0);
+      expect(result?.getDate()).toBe(1);
     });
   });
 

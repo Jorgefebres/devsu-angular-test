@@ -75,13 +75,16 @@
 
     <div *ngIf="showDeleteModal" class="modal-container">
       <div class="modal-content">
-        <p>
+        <p class="modal-title">
           Estas seguro de eliminar el producto
           {{ selectedProductForDelete?.name }}?
         </p>
+        <div class="divider-container">
+          <div class="divider"></div>
+        </div>
         <div class="modal-buttons">
-          <button (click)="deleteProduct()" class="yes">Yes</button>
-          <button (click)="cancelDelete()" class="no">No</button>
+          <button (click)="cancelDelete()" class="no">Cancelar</button>
+          <button (click)="onDeleteProduct()" class="yes">Confirmar</button>
         </div>
       </div>
     </div>

@@ -15,7 +15,7 @@ describe('ProductListComponent', () => {
   beforeEach(() => {
     productsServiceMock = {
       getProducts: jest.fn(() => of([])),
-      deleteProduct: jest.fn(() => of(null)),
+      deleteProduct: jest.fn(() => of('')),
       setSelectedProduct: jest.fn(),
     };
 
@@ -151,7 +151,7 @@ describe('ProductListComponent', () => {
     };
     component.selectedProductForDelete = product;
 
-    component.deleteProduct();
+    component.onDeleteProduct();
 
     expect(productsServiceMock.deleteProduct).toHaveBeenCalledWith(product.id);
     expect(component.selectedProductForDelete).toBeNull();

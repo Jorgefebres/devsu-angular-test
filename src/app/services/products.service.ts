@@ -10,13 +10,14 @@ import { HEADERS } from '../constants/constants';
 })
 export class ProductsService {
   apiUrl = environment.baseUrl;
-  private selectedProductSubject = new BehaviorSubject<Product | null>(null);
+  selectedProductSubject = new BehaviorSubject<Product | null>(null);
   selectedProduct$ = this.selectedProductSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
   getHeaders(): HttpHeaders {
     return new HttpHeaders({
+      'Content-Type': 'application/json',
       [HEADERS.AUTHOR_ID]: '500',
     });
   }
@@ -53,12 +54,13 @@ export class ProductsService {
     );
   }
 
-  deleteProduct(id: string): Observable<any> {
-    let queryParams = new HttpParams();
-    queryParams = queryParams.append('id', id);
-    return this.http.delete<any>(`${this.apiUrl}/bp/products`, {
-      headers: this.getHeaders(),
+  deleteProduct(id: string): Observable<string> {
+    const headers = this.getHeaders();
+    const queryParams = new HttpParams().set('id', id);
+    return this.http.delete(`${this.apiUrl}/bp/products`, {
+      headers,
       params: queryParams,
+      responseType: 'text',
     });
   }
 

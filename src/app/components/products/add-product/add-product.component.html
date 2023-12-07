@@ -183,7 +183,12 @@
     </div>
     <ng-template #content>
       <div class="actions">
-        <button class="reset-button" (click)="resetForm()">Reiniciar</button>
+        <button
+          class="reset-button"
+          (click)="isEditMode ? goToProductList() : resetForm()"
+        >
+          {{ isEditMode ? "Volver" : "Reiniciar" }}
+        </button>
         <button
           class="send-button"
           type="submit"

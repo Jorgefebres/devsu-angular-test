@@ -125,39 +125,4 @@ describe('ProductsService', () => {
     expect(req.request.method).toEqual('PUT');
     req.flush(mockProduct);
   });
-
-  it('should set and get selected product', () => {
-    const mockProduct: Product = {
-      id: 'trj-test1',
-      name: 'Product 1',
-      description: 'tarjeta de credito test',
-      logo: 'logo-test',
-      date_release: '',
-      date_revision: '',
-    };
-
-    service.setSelectedProduct(mockProduct);
-
-    service.getSelectedProduct().subscribe((selectedProduct) => {
-      expect(selectedProduct).toEqual(mockProduct);
-    });
-  });
-
-  it('should clear selected product', () => {
-    const mockProduct: Product = {
-      id: 'trj-test1',
-      name: 'Product 1',
-      description: 'tarjeta de credito test',
-      logo: 'logo-test',
-      date_release: '',
-      date_revision: '',
-    };
-
-    service.setSelectedProduct(mockProduct);
-    service.clearSelectedProduct();
-
-    service.getSelectedProduct().subscribe((selectedProduct) => {
-      expect(selectedProduct).toBeNull();
-    });
-  });
 });

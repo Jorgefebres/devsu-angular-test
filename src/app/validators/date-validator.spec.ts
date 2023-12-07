@@ -21,7 +21,7 @@ describe('futureDateValidator', () => {
   });
 
   it('should return true for a future date', () => {
-    // Assuming today is 2023-12-06
+    // suponiendo q hoy es 2023-12-06
     const futureDate = '2023-12-07';
     control.setValue(futureDate);
     const result = futureDateValidator()(control);
