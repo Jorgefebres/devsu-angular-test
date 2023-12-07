@@ -83,12 +83,10 @@ export class ProductListComponent {
   }
 
   handleDeleteError(error: any): Observable<never> {
-    console.log(error);
     return throwError(error);
   }
 
   handleDeleteSuccess() {
-    console.log('success');
     this.fetchProducts();
     this.cancelDelete();
   }
