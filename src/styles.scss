@@ -1,1 +1,52 @@
-/* You can add global styles to this file, and also import other style files */
+@import "./scss/tokens.scss";
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  border-radius: inherit;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
+html {
+  box-sizing: border-box;
+}
+
+body {
+  font-size: var(--font-size-base);
+}
+
+button {
+  padding: 1em;
+  font-weight: bold;
+  color: var(--color-brand-blue);
+  border: none;
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+input {
+  width: 100%;
+  height: 2.5em;
+  font-size: 12pt;
+  padding: 0 0.5em;
+  border: 1.5px solid #b8b9ba;
+  border-radius: 5px;
+}
+
+.divider-container {
+  display: flex;
+  justify-content: center;
+  .divider {
+    width: 100%;
+    border-bottom: 2px solid #a9a9ab;
+    margin-bottom: 1.5em;
+  }
+}

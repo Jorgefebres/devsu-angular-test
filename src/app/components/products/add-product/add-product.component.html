@@ -1,0 +1,202 @@
+<div class="add-product">
+  <h2>{{ isEditMode ? "Editar Producto" : "Formulario de Registro" }}</h2>
+  <div class="divider-container">
+    <div class="divider"></div>
+  </div>
+  <form [formGroup]="productForm" (ngSubmit)="addOrUpdateProduct()">
+    <div class="form-group-container">
+      <div class="form-group">
+        <label for="id">Id:</label>
+        <input
+          type="text"
+          id="id"
+          formControlName="id"
+          [class.error]="
+            productForm.get('id')?.hasError('duplicateId') &&
+            productForm.get('id')?.touched
+          "
+        />
+        <div
+          *ngIf="
+            productForm.get('id')?.hasError('required') &&
+            productForm.get('id')?.touched
+          "
+          class="error-message"
+        >
+          Este campo es requerido!
+        </div>
+        <div
+          *ngIf="
+            productForm.get('id')?.hasError('minlength') &&
+            productForm.get('id')?.touched
+          "
+          class="error-message"
+        >
+          El Id debe tener al menos 3 caracteres.
+        </div>
+        <div
+          *ngIf="
+            productForm.get('id')?.hasError('maxlength') &&
+            productForm.get('id')?.touched
+          "
+          class="error-message"
+        >
+          El Id no debe tener más de 10 caracteres.
+        </div>
+        <div
+          *ngIf="
+            productForm.get('id')?.hasError('duplicateId') &&
+            productForm.get('id')?.touched
+          "
+          class="error-message"
+        >
+          El ID ya existe. Por favor, utiliza otro (Id no válido).
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="name">Nombre:</label>
+        <input type="text" id="name" formControlName="name" />
+        <div
+          *ngIf="
+            productForm.get('name')?.hasError('required') &&
+            productForm.get('name')?.touched
+          "
+          class="error-message"
+        >
+          Este campo es requerido!
+        </div>
+        <div
+          *ngIf="
+            productForm.get('name')?.hasError('minlength') &&
+            productForm.get('name')?.touched
+          "
+          class="error-message"
+        >
+          El Nombre debe tener al menos 5 caracteres.
+        </div>
+        <div
+          *ngIf="
+            productForm.get('name')?.hasError('maxlength') &&
+            productForm.get('name')?.touched
+          "
+          class="error-message"
+        >
+          El Nombre no debe tener más de 100 caracteres.
+        </div>
+      </div>
+    </div>
+    <div class="form-group-container">
+      <div class="form-group">
+        <label for="description">Descripción:</label>
+        <input id="description" formControlName="description" />
+        <div
+          *ngIf="
+            productForm.get('description')?.hasError('required') &&
+            productForm.get('description')?.touched
+          "
+          class="error-message"
+        >
+          Este campo es requerido!
+        </div>
+        <div
+          *ngIf="
+            productForm.get('description')?.hasError('minlength') &&
+            productForm.get('description')?.touched
+          "
+          class="error-message"
+        >
+          La Descripción debe tener al menos 10 caracteres.
+        </div>
+        <div
+          *ngIf="
+            productForm.get('description')?.hasError('maxlength') &&
+            productForm.get('description')?.touched
+          "
+          class="error-message"
+        >
+          La Descripción no debe tener más de 200 caracteres.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="logo">Logo:</label>
+        <input type="text" id="logo" formControlName="logo" />
+        <div
+          *ngIf="
+            productForm.get('logo')?.hasError('required') &&
+            productForm.get('logo')?.touched
+          "
+          class="error-message"
+        >
+          Este campo es requerido!
+        </div>
+      </div>
+    </div>
+    <div class="form-group-container">
+      <div class="form-group">
+        <label for="date_release">Fecha Liberación:</label>
+        <input
+          type="text"
+          id="date_release"
+          placeholder="dd/mm/aaaa"
+          formControlName="date_release"
+        />
+        <div
+          *ngIf="
+            productForm.get('date_release')?.hasError('required') &&
+            productForm.get('date_release')?.touched
+          "
+          class="error-message"
+        >
+          Este campo es requerido!
+        </div>
+        <div
+          *ngIf="
+            productForm.get('date_release')?.hasError('futureDate') &&
+            productForm.get('date_release')?.touched
+          "
+          class="error-message"
+        >
+          La fecha debe ser igual o mayor a la fecha actual.
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="date_revision">Fecha Revisión:</label>
+        <input
+          type="text"
+          id="date_revision"
+          placeholder="dd/mm/aaaa"
+          formControlName="date_revision"
+        />
+        <div
+          *ngIf="
+            productForm.get('date_revision')?.hasError('required') &&
+            productForm.get('date_revision')?.touched
+          "
+          class="error-message"
+        >
+          Este campo es requerido!
+        </div>
+      </div>
+    </div>
+    <div *ngIf="loading; else content">
+      <app-skeleton-loader [loadingLines]="1"></app-skeleton-loader>
+    </div>
+    <ng-template #content>
+      <div class="actions">
+        <button
+          class="reset-button"
+          (click)="isEditMode ? goToProductList() : resetForm()"
+        >
+          {{ isEditMode ? "Volver" : "Reiniciar" }}
+        </button>
+        <button
+          class="send-button"
+          type="submit"
+          [disabled]="!productForm.valid"
+        >
+          {{ isEditMode ? "Actualizar" : "Enviar" }}
+        </button>
+      </div>
+    </ng-template>
+  </form>
+</div>

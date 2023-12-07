@@ -1,0 +1,92 @@
+<div class="product-list">
+  <div *ngIf="loading; else content">
+    <app-skeleton-loader [loadingLines]="5"></app-skeleton-loader>
+  </div>
+  <ng-template #content>
+    <div class="actions-container">
+      <div class="search-container">
+        <input
+          type="text"
+          id="search"
+          [(ngModel)]="searchTerm"
+          placeholder="Search..."
+        />
+      </div>
+      <div class="add-product-button-container">
+        <button (click)="goToAddProduct()">Agregar</button>
+      </div>
+    </div>
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Logo</th>
+            <th>Nombre del producto</th>
+            <th>Descripción</th>
+            <th>Fecha de liberación</th>
+            <th>Fecha de reestructuración</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of paginatedProducts">
+            <td>
+              <img [src]="product.logo" alt="logo" width="50" height="30" />
+            </td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.description }}</td>
+            <td>{{ product.date_release | date : "dd/MM/yyyy" }}</td>
+            <td>{{ product.date_revision | date : "dd/MM/yyyy" }}</td>
+            <td>
+              <select (change)="onActionChange($event, product)">
+                <option value="" disabled selected>Seleccionar...</option>
+                <option value="edit">Editar</option>
+                <option value="delete">Eliminar</option>
+              </select>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div *ngIf="paginatedProducts.length > 0" class="pagination">
+      <label
+        >{{ paginatedProducts.length }}/
+        {{ products.length }} Resultado(s)</label
+      >
+      <button
+        (click)="onPageChange(currentPage - 1)"
+        [disabled]="currentPage === 1"
+      >
+        Anterior
+      </button>
+      <span>{{ currentPage }} / {{ totalPages }}</span>
+      <button
+        (click)="onPageChange(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+      >
+        Siguiente
+      </button>
+      <select [(ngModel)]="pageSize" (change)="onMaxPageChange(pageSize)">
+        <option *ngFor="let pageSize of pageSizes" [value]="pageSize">
+          {{ pageSize }}
+        </option>
+      </select>
+    </div>
+
+    <div *ngIf="showDeleteModal" class="modal-container">
+      <div class="modal-content">
+        <p class="modal-title">
+          Estas seguro de eliminar el producto
+          {{ selectedProductForDelete?.name }}?
+        </p>
+        <div class="divider-container">
+          <div class="divider"></div>
+        </div>
+        <div class="modal-buttons">
+          <button (click)="cancelDelete()" class="no">Cancelar</button>
+          <button (click)="onDeleteProduct()" class="yes">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>
